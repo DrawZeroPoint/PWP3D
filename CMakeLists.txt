@@ -13,13 +13,13 @@ include(SetPlatformVars)
 
 # Overide with cmake -DCMAKE_BUILD_TYPE=Debug {dir}
 if( NOT CMAKE_BUILD_TYPE )
-   set( CMAKE_BUILD_TYPE Release )
+   set( CMAKE_BUILD_TYPE Debug )
 endif()
 
 option(BUILD_SHARED_LIBS "Build Shared Library" ON)
 add_subdirectory(PerseusLib)
 
-option(BUILD_PWP3D_APP "Build PWP3D App" OFF)
+option(BUILD_PWP3D_APP "Build PWP3D App" ON)
 if(BUILD_PWP3D_APP)
   add_subdirectory(Application)
 endif()

@@ -5,14 +5,20 @@
 
 using namespace Perseus::Utils;
 
+using namespace std;
+
+string folder = "/home/omnisky/PWP3D/Files/";
+
 int main(void)
 {
-  //  std::string sModelPath = "/Users/luma/Code/Luma/PWP3D/Files/Models/Renderer/long.obj";
-  //  std::string sSrcImage = "/Users/luma/Code/Luma/PWP3D/Files/Images/Red.png";
-  //  std::string sCameraMatrix = "/Users/luma/Code/Luma/PWP3D/Files/CameraCalibration/900nc.cal";
-  //  std::string sTargetMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/480p_All_VideoMask.png";
-  //  std::string sHistSrc = "/Users/luma/Code/Luma/PWP3D/Files/Masks/Red_Source.png";
-  //  std::string sHistMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/Red_Mask.png";
+  std::string sModelPath = folder + "Models/Renderer/long.obj";
+  std::string sSrcImage = folder + "Images/Red.png";
+  std::string sCameraMatrix = folder + "CameraCalibration/900nc.cal";
+  std::string sTargetMask = folder + "Masks/480p_All_VideoMask.png";
+  std::string sHistSrc = folder + "Masks/Red_Source.png";
+  std::string sHistMask = folder + "Masks/Red_Mask.png";
+
+  string sResultImage = folder + "Results/posteriors_r.png";
 
 
   // blue car demo
@@ -24,12 +30,12 @@ int main(void)
   //  std::string sHistMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/248-ID-3-LiveImage.png";
 
   // red can demo
-  std::string sModelPath = "/Users/luma/Code/DataSet/Mesh/RedCan.obj";
-  std::string sSrcImage = "/Users/luma/Code/Luma/PWP3D/Files/Images/248-LiveRGB.png";
-  std::string sCameraMatrix = "/Users/luma/Code/Luma/PWP3D/Files/CameraCalibration/Kinect.cal";
-  std::string sTargetMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/480p_All_VideoMask.png";
-  std::string sHistSrc = "/Users/luma/Code/Luma/PWP3D/Files/Images/248-LiveRGB.png";
-  std::string sHistMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/248-ID-1-LiveImage.png";
+  //  std::string sModelPath = "/Users/luma/Code/DataSet/Mesh/RedCan.obj";
+  //  std::string sSrcImage = "/Users/luma/Code/Luma/PWP3D/Files/Images/248-LiveRGB.png";
+  //  std::string sCameraMatrix = "/Users/luma/Code/Luma/PWP3D/Files/CameraCalibration/Kinect.cal";
+  //  std::string sTargetMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/480p_All_VideoMask.png";
+  //  std::string sHistSrc = "/Users/luma/Code/Luma/PWP3D/Files/Images/248-LiveRGB.png";
+  //  std::string sHistMask = "/Users/luma/Code/Luma/PWP3D/Files/Masks/248-ID-1-LiveImage.png";
 
   // ---------------------------------------------------------------------------
   char str[100];
@@ -98,16 +104,17 @@ int main(void)
   objects[objectIdx]->stepSize[viewIdx] = new StepSize3D(0.2f, 0.5f, 0.5f, 10.0f);
 
   //initial pose per object and view
+  // For long model
   // Notice the input pose here is angle, not radians for the rotation part
-  //  objects[objectIdx]->initialPose[viewIdx]->SetFrom(
-  //        -1.98f, -2.90f, 37.47f, -40.90f, -207.77f, 27.48f);
+  objects[objectIdx]->initialPose[viewIdx]->SetFrom(
+        -2.98f, -3.90f, 37.47f, -40.90f, -200.77f, 27.48f);
 
   // for blue car demo
   //  objects[objectIdx]->initialPose[viewIdx]->SetFrom( -3.0f,-4.5f,28.f, -220.90f, -207.77f, 87.48f);
 
   // for red can demo
-  objects[objectIdx]->initialPose[viewIdx]->SetFrom(
-        1.0f, 3.0f, 30.f, 180.f, 80.f, 60.f);
+  //  objects[objectIdx]->initialPose[viewIdx]->SetFrom(
+  //        1.0f, 3.0f, 30.f, 180.f, 80.f, 60.f);
 
   //primary initilisation
   OptimisationEngine::Instance()->Initialise(width, height);
@@ -124,7 +131,7 @@ int main(void)
 
   cv::Mat ResultMat(height,width,CV_8UC4, ResultImage->pixels);
   cv::imshow("initial pose", ResultMat);
-  cv::waitKey(1000);
+  cv::waitKey(0);
 
   std::cout<<"[App] Finish Rendered object initial pose."<<std::endl;
 
@@ -153,7 +160,7 @@ int main(void)
     printf("======= mode: useCUDAAEF: %d, use CUDARender %d ========;\n",
            iterConfig->useCUDAEF, iterConfig->useCUDARender);
 
-    sprintf(str, "/Users/luma/Code/Luma/PWP3D/Files/Results/result%04d.png", i);
+    sprintf(str, "Results/result%04d.png", i);
 
     //main processing
     t.restart();
@@ -166,10 +173,11 @@ int main(void)
           objects[objectIdx], views[viewIdx], objects[objectIdx]->pose[viewIdx]);
 
     //result save to file
-    //    ImageUtils::Instance()->SaveImageToFile(result, str);
-    cv::Mat ResultMat(height,width,CV_8UC4, ResultImage->pixels);
+    string result_image = folder + "Results/result.png";
+    ImageUtils::Instance()->SaveImageToFile(ResultImage, (char*)result_image.c_str());
+    cv::Mat ResultMat(height, width, CV_8UC4, ResultImage->pixels);
     cv::imshow("result", ResultMat);
-    cv::waitKey(2000);
+    cv::waitKey(0);
 
     printf("final pose result %f %f %f %f %f %f %f\n\n",
            objects[objectIdx]->pose[viewIdx]->translation->x,
@@ -187,7 +195,7 @@ int main(void)
         ResultImage, GETIMAGE_POSTERIORS,
         objects[objectIdx], views[viewIdx], objects[objectIdx]->pose[viewIdx]);
 
-  ImageUtils::Instance()->SaveImageToFile(ResultImage, str);
+  ImageUtils::Instance()->SaveImageToFile(ResultImage, (char*)sResultImage.c_str());
 
   //primary engine destructor
   OptimisationEngine::Instance()->Shutdown();

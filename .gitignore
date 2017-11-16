@@ -1,0 +1,16 @@
+#IGNORE CERTAIN SUBFIX
+*.user
+*.caffemodel
+*.prototxt
+
+#IGNORED FOLDERS
+build-PWP3D-Desktop-Default/
+build/
+qtbuild/
+cmake/
+nets/models/
+nets/results/
+nets/solverstate/
+nets/solver_temp/
+nets/tracker_output/
+scripts/Fscore_v1.0/
